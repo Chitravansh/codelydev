@@ -1,0 +1,19 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <title>Codelydev icon mark</title>
+
+  <!-- Outer dark background -->
+  <rect width="200" height="200" fill="#0a0d14"/>
+
+  <!-- Icon card -->
+  <rect x="30" y="30" width="140" height="140" rx="28" fill="#1a2035"/>
+  <rect x="31" y="31" width="138" height="138" rx="27.5" fill="none" stroke="#2a3a5c" stroke-width="1.5"/>
+
+  <!-- Left bracket < -->
+  <polyline points="78,68 55,100 78,132" fill="none" stroke="#6ba3ff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Right bracket > -->
+  <polyline points="122,68 145,100 122,132" fill="none" stroke="#6ba3ff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Slash / -->
+  <line x1="115" y1="68" x2="85" y2="132" stroke="#2dd4bf" stroke-width="12" stroke-linecap="round"/>
+</svg>
