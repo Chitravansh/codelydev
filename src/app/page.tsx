@@ -4,6 +4,8 @@ import Image from "next/image";
 import { Navbar } from "@/components/Navbar";
 import { ClientOnly } from "@/components/ClientOnly";
 
+export const dynamic = "force-dynamic";
+
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
