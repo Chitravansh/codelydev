@@ -1,74 +1,148 @@
 "use client";
 
-import Image from "next/image";
-import { useTheme } from "./ThemeProvider";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Wordmark } from "./Brand";
+import { useCart } from "./CartProvider";
+import { ThemeToggle } from "./ThemeToggle";
+import { navLinks } from "@/lib/site";
 
 export function Navbar() {
-  const { theme, toggleTheme } = useTheme();
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const { count } = useCart();
+  const close = () => setOpen(false);
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50">
-      <nav className="mx-auto flex items-center justify-between px-6 py-4">
-        {/* Logo */}
-        <a href="/" className="flex items-center gap-2.5 group">
-          <Image
-            src="/favicon.svg"
-            alt="CodelyDev"
-            width={32}
-            height={32}
-            className="rounded-lg"
-            priority
-          />
-          <span className="text-lg font-semibold tracking-tight text-zinc-900 dark:text-white">
-            codely<span className="font-bold text-blue-600 dark:text-blue-400">dev</span>
-          </span>
-        </a>
-
-        {/* Theme toggle */}
-        <button
-          onClick={toggleTheme}
-          className="relative h-9 w-[72px] rounded-full bg-zinc-200 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 shadow-sm transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 dark:focus-visible:ring-zinc-500"
-          aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur-xl">
+      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5 sm:px-6">
+        <Link
+          href="/"
+          onClick={close}
+          className="shrink-0 text-[1.15rem] text-foreground"
+          aria-label={`${navLinks[0].label} — codelydev`}
         >
-          <span className="absolute inset-0 flex items-center justify-between px-2">
-            <svg
-              className={`h-4 w-4 transition-colors duration-300 ${
-                theme === "light" ? "text-amber-500" : "text-zinc-500"
+          <Wordmark mark className="h-7 sm:h-8" />
+        </Link>
+
+        <div className="hidden items-center gap-1 md:flex">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={close}
+              className={`relative rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                isActive(link.href)
+                  ? "text-brand"
+                  : "text-muted hover:text-foreground"
               }`}
+            >
+              {link.label}
+              {isActive(link.href) ? (
+                <span className="absolute inset-x-4 -bottom-[13px] h-0.5 rounded-full brand-gradient" />
+              ) : null}
+            </Link>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+
+          <Link
+            href="/cart"
+            className="relative flex h-10 items-center gap-2 rounded-full border border-border px-4 text-sm font-medium text-foreground transition-colors hover:border-brand hover:text-brand"
+            aria-label={`Cart, ${count} item${count === 1 ? "" : "s"}`}
+          >
+            <svg
+              className="h-4 w-4"
               fill="none"
               stroke="currentColor"
+              strokeWidth={1.8}
               viewBox="0 0 24 24"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                d="M3 3h2l.4 2M7 13h10l3-8H5.4M7 13L5.4 5M7 13l-2 5h13M10 21a1 1 0 100-2 1 1 0 000 2zm7 0a1 1 0 100-2 1 1 0 000 2z"
               />
             </svg>
+            <span className="hidden sm:inline">Cart</span>
+            {count > 0 ? (
+              <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full brand-gradient px-1 text-[0.7rem] font-bold text-navy">
+                {count}
+              </span>
+            ) : null}
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:border-brand md:hidden"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+          >
             <svg
-              className={`h-4 w-4 transition-colors duration-300 ${
-                theme === "dark" ? "text-blue-400" : "text-zinc-500"
-              }`}
+              className="h-5 w-5"
               fill="none"
               stroke="currentColor"
+              strokeWidth={1.8}
               viewBox="0 0 24 24"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-              />
+              {open ? (
+                <path
+                  strokeLinecap="round"
+                  d="M6 6l12 12M18 6L6 18"
+                />
+              ) : (
+                <path
+                  strokeLinecap="round"
+                  d="M4 7h16M4 12h16M4 17h16"
+                />
+              )}
             </svg>
-          </span>
-          <span
-            className={`absolute top-0.5 left-0.5 h-8 w-8 rounded-full bg-white dark:bg-zinc-600 shadow-md transition-transform duration-300 ease-in-out ${
-              theme === "dark" ? "translate-x-[33px]" : "translate-x-0"
-            }`}
-          />
-        </button>
+          </button>
+        </div>
       </nav>
+
+      {open ? (
+        <div className="border-t border-border bg-background md:hidden">
+          <div className="mx-auto flex max-w-6xl flex-col gap-1 px-5 py-4">
+            {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={close}
+              className={`rounded-xl px-4 py-3 text-base font-medium transition-colors ${
+                  isActive(link.href)
+                    ? "bg-brand-soft text-brand"
+                    : "text-muted hover:bg-surface-2 hover:text-foreground"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+            <Link
+              href="/cart"
+              onClick={close}
+              className="rounded-xl px-4 py-3 text-base font-medium text-muted transition-colors hover:bg-surface-2 hover:text-foreground"
+            >
+              Cart {count > 0 ? `(${count})` : ""}
+            </Link>
+          </div>
+        </div>
+      ) : null}
     </header>
   );
 }
